@@ -136,6 +136,13 @@ LOCAL_SHARED_LIBRARIES := \
     libutils \
     liblog
 
+ifneq ($(TARGET_DISABLE_SPEEX_RESAMPLER),true)
+    LOCAL_CFLAGS += -DSPEEX_RESAMPLER
+    LOCAL_SRC_FILES += AudioResamplerSpeex.cpp.arm
+    LOCAL_C_INCLUDES += external/speex/include
+    LOCAL_SHARED_LIBRARIES += libspeexresampler
+endif
+
 LOCAL_MODULE:= test-resample
 
 LOCAL_MODULE_TAGS := optional
