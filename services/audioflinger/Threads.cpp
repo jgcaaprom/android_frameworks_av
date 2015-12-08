@@ -7025,7 +7025,7 @@ bool AudioFlinger::RecordThread::checkForNewParameter_l(const String8& keyValueP
                         mInput->stream->common.get_sample_rate(&mInput->stream->common)) &&
 #else
                 (mInput->stream->common.get_sample_rate(&mInput->stream->common)
-                        <= (2 * samplingRate)) &&
+                        <= (AUDIO_RESAMPLER_DOWN_RATIO_MAX * samplingRate)) &&
 #endif
                 audio_channel_count_from_in_mask(
                         mInput->stream->common.get_channels(&mInput->stream->common)) <= FCC_8) {
