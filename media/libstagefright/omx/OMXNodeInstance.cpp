@@ -36,6 +36,7 @@
 #include <media/stagefright/foundation/ADebug.h>
 #include <media/stagefright/foundation/ABuffer.h>
 #include <media/stagefright/MediaErrors.h>
+
 #include <utils/misc.h>
 
 static const OMX_U32 kPortIndexInput = 0;
@@ -1022,7 +1023,7 @@ status_t OMXNodeInstance::signalEndOfInputStream() {
 
 status_t OMXNodeInstance::allocateSecureBuffer(
         OMX_U32 portIndex, size_t size, OMX::buffer_id *buffer,
-        void **buffer_data, sp<NativeHandle> *native_handle) {
+        void **buffer_data, native_handle_t **native_handle) {
     if (buffer == NULL || buffer_data == NULL || native_handle == NULL) {
         ALOGE("b/25884056");
         return BAD_VALUE;
@@ -1052,8 +1053,7 @@ status_t OMXNodeInstance::allocateSecureBuffer(
     *buffer = makeBufferID(header);
     if (mSecureBufferType[portIndex] == kSecureBufferTypeNativeHandle) {
         *buffer_data = NULL;
-        *native_handle = NativeHandle::create(
-                (native_handle_t *)header->pBuffer, false /* ownsHandle */);
+        *native_handle = (native_handle_t *)header->pBuffer;
     } else {
         *buffer_data = header->pBuffer;
         *native_handle = NULL;
@@ -1066,8 +1066,7 @@ status_t OMXNodeInstance::allocateSecureBuffer(
         bufferSource->addCodecBuffer(header);
     }
     CLOG_BUFFER(allocateSecureBuffer, NEW_BUFFER_FMT(
-            *buffer, portIndex, "%zu@%p:%p", size, *buffer_data,
-            *native_handle == NULL ? NULL : (*native_handle)->handle()));
+            *buffer, portIndex, "%zu@%p:%p", size, *buffer_data, *native_handle));
 
     return OK;
 }
